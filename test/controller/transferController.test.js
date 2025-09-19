@@ -68,9 +68,13 @@ describe('Transfer Controller', () => {
                     destinatario: "jamile",
                     valor: 1500
                 });
+                console.log(resposta.body)
 
             expect(resposta.status).to.equal(200)
-            //expect(resposta.body).to.have.property('message','Transferência realizada com sucesso.')
+            expect(resposta.body).to.have.property('message','Transferência realizada com sucesso.');
+            expect(resposta.body.transfer).to.have.property('remetente', 'marlon');
+            expect(resposta.body.transfer).to.have.property('destinatario', 'jamile');
+            expect(resposta.body.transfer).to.have.property('valor', 1500);
 
             //Reset do mock
             sinon.restore();
