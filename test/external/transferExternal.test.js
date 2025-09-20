@@ -12,8 +12,8 @@ describe('Transfer External', () => {
                     valor: 600
                 });
 
-            expect(resposta.status).to.equal(400)
-            expect(resposta.body).to.have.property('message', 'Remetente, destinatario e valor são obrigatórios.')
+            expect(resposta.status).to.equal(400);
+            expect(resposta.body).to.have.property('message', 'Remetente, destinatario e valor são obrigatórios.');
         })
     })
 })
