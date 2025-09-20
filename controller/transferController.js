@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const transferService = require('../service/transferService');
+const authenticateToken = require('../middleware/authenticateToken');
 
-// POST /api/transfers
-router.post('/', (req, res) => {
+
+// Todas as rotas de transferências exigem autenticação
+router.post('/', authenticateToken, (req, res) => {
 	const { remetente, destinatario, valor } = req.body;
 	const result = transferService.createTransfer(remetente, destinatario, valor);
 	if (result.status !== 200) {
@@ -12,6 +14,6 @@ router.post('/', (req, res) => {
 	res.json({ message: result.message, transfer: result.transfer });
 });
 
-router.get('/', transferService.getAllTransfers);
+router.get('/', authenticateToken, transferService.getAllTransfers);
 
 module.exports = router;
