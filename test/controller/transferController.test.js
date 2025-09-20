@@ -10,8 +10,8 @@ const authenticateToken = require('../../middleware/authenticateToken');
 
 describe('Transfer Controller', () => {
     describe('POST /transfers', () => {
-        it('Quando deixo de informar o remetente o retorno será 400', async () => {
-            
+        let token = null;
+        beforeEach( async() => {
             const respostaLogin = await request(app)
                 .post('/api/users/login')
                 .send({
@@ -19,11 +19,14 @@ describe('Transfer Controller', () => {
                     password: "12345"
                 });
 
-            const token = respostaLogin.body.token
+             token = respostaLogin.body.token
+        });
 
+
+        it('Quando deixo de informar o remetente o retorno será 400', async () => {
             const resposta = await request(app)
                 .post('/api/transfers')
-                .set('Authorization', `Bearer ${token}` )
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     remetente: "",
                     destinatario: "jamile",
@@ -44,18 +47,9 @@ describe('Transfer Controller', () => {
                 message: 'Remetente, destinatario e valor são obrigatórios.'
             })
 
-            const respostaLogin = await request(app)
-                .post('/api/users/login')
-                .send({
-                    username: "marlon",
-                    password: "12345"
-                });
-
-            const token = respostaLogin.body.token
-
             const resposta = await request(app)
                 .post('/api/transfers')
-                .set('Authorization', `Bearer ${token}` )
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     remetente: "",
                     destinatario: "jamile",
@@ -84,18 +78,9 @@ describe('Transfer Controller', () => {
                 }
             })
 
-            const respostaLogin = await request(app)
-                .post('/api/users/login')
-                .send({
-                    username: "marlon",
-                    password: "12345"
-                });
-
-            const token = respostaLogin.body.token
-
             const resposta = await request(app)
                 .post('/api/transfers')
-                .set('Authorization', `Bearer ${token}` )
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     remetente: "marlon",
                     destinatario: "jamile",
@@ -109,11 +94,7 @@ describe('Transfer Controller', () => {
             delete respostaEsperada.transfer.data;
             expect(resposta.body).to.eql(respostaEsperada);
 
-
-
-
-
-            /*
+           /*
             expect(resposta.body).to.have.property('message','Transferência realizada com sucesso.');
             expect(resposta.body.transfer).to.have.property('remetente', 'marlon');
             expect(resposta.body.transfer).to.have.property('destinatario', 'jamile');
