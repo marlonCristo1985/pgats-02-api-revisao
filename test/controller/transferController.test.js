@@ -6,6 +6,7 @@ const app = require('../../app')
 
 const transferService = require('../../service/transferService');
 
+
 describe('Transfer Controller', () => {
     describe('POST /transfers', () => {
         it('Quando deixo de informar o remetente o retorno será 400', async () => {
@@ -46,7 +47,7 @@ describe('Transfer Controller', () => {
             sinon.restore();
         })
 
-        it('Usando mocks: Quando informo valores válidos eu tenho sucesso com 200 CREATED', async () => {
+        it.only('Usando mocks: Quando informo valores válidos eu tenho sucesso com 200 CREATED', async () => {
             // Mocar apenas a função transfer do service
 
             const transferServiceMock = sinon.stub(transferService, 'createTransfer')
@@ -71,10 +72,22 @@ describe('Transfer Controller', () => {
                 console.log(resposta.body)
 
             expect(resposta.status).to.equal(200)
+                        
+            const respostaEsperada = require('../fixture/respostas/quandoInformoValoresValidosEuTenhoSucesso.json');
+            delete resposta.body.transfer.data;
+            delete respostaEsperada.transfer.data;
+            expect (resposta.body).to.eql(respostaEsperada);
+
+
+            
+        
+
+            /*
             expect(resposta.body).to.have.property('message','Transferência realizada com sucesso.');
             expect(resposta.body.transfer).to.have.property('remetente', 'marlon');
             expect(resposta.body.transfer).to.have.property('destinatario', 'jamile');
             expect(resposta.body.transfer).to.have.property('valor', 1500);
+            */
 
             //Reset do mock
             sinon.restore();
