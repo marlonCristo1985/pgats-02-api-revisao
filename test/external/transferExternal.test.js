@@ -17,7 +17,7 @@ describe('Transfer External', () => {
                 .post('/api/transfers')
                 .set('Authorization', `Bearer ${token}` )
                 .send({
-                    remetente: "marlon",
+                    remetente: "",
                     destinatario: "jamile",
                     valor: 600
                 });
