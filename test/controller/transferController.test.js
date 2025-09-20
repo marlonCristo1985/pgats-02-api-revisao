@@ -5,13 +5,25 @@ const { expect } = require('chai')
 const app = require('../../app')
 
 const transferService = require('../../service/transferService');
+const authenticateToken = require('../../middleware/authenticateToken');
 
 
 describe('Transfer Controller', () => {
     describe('POST /transfers', () => {
         it('Quando deixo de informar o remetente o retorno será 400', async () => {
+            
+            const respostaLogin = await request(app)
+                .post('/api/users/login')
+                .send({
+                    username: "marlon",
+                    password: "12345"
+                });
+
+            const token = respostaLogin.body.token
+
             const resposta = await request(app)
                 .post('/api/transfers')
+                .set('Authorization', `Bearer ${token}` )
                 .send({
                     remetente: "",
                     destinatario: "jamile",
@@ -32,8 +44,18 @@ describe('Transfer Controller', () => {
                 message: 'Remetente, destinatario e valor são obrigatórios.'
             })
 
+            const respostaLogin = await request(app)
+                .post('/api/users/login')
+                .send({
+                    username: "marlon",
+                    password: "12345"
+                });
+
+            const token = respostaLogin.body.token
+
             const resposta = await request(app)
                 .post('/api/transfers')
+                .set('Authorization', `Bearer ${token}` )
                 .send({
                     remetente: "",
                     destinatario: "jamile",
@@ -47,7 +69,7 @@ describe('Transfer Controller', () => {
             sinon.restore();
         })
 
-        it.only('Usando mocks: Quando informo valores válidos eu tenho sucesso com 200 CREATED', async () => {
+        it('Usando mocks: Quando informo valores válidos eu tenho sucesso com 200 CREATED', async () => {
             // Mocar apenas a função transfer do service
 
             const transferServiceMock = sinon.stub(transferService, 'createTransfer')
@@ -58,29 +80,38 @@ describe('Transfer Controller', () => {
                     remetente: 'marlon',
                     destinatario: 'jamile',
                     valor: 1500,
-                        data: new Date().toISOString()
-                    }
-                })
+                    data: new Date().toISOString()
+                }
+            })
+
+            const respostaLogin = await request(app)
+                .post('/api/users/login')
+                .send({
+                    username: "marlon",
+                    password: "12345"
+                });
+
+            const token = respostaLogin.body.token
 
             const resposta = await request(app)
                 .post('/api/transfers')
+                .set('Authorization', `Bearer ${token}` )
                 .send({
                     remetente: "marlon",
                     destinatario: "jamile",
                     valor: 1500
                 });
-                console.log(resposta.body)
 
             expect(resposta.status).to.equal(200)
-                        
+
             const respostaEsperada = require('../fixture/respostas/quandoInformoValoresValidosEuTenhoSucesso.json');
             delete resposta.body.transfer.data;
             delete respostaEsperada.transfer.data;
-            expect (resposta.body).to.eql(respostaEsperada);
+            expect(resposta.body).to.eql(respostaEsperada);
 
 
-            
-        
+
+
 
             /*
             expect(resposta.body).to.have.property('message','Transferência realizada com sucesso.');
